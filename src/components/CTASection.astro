@@ -1,0 +1,73 @@
+---
+interface Props {
+  heading?: string;
+  subheading?: string;
+  variant?: 'teal' | 'dark' | 'light';
+}
+
+const {
+  heading = 'Ready to Live Without Pain?',
+  subheading = 'Same-day appointments available. Board-certified specialists. Most insurance accepted.',
+  variant = 'teal',
+} = Astro.props;
+
+const phone = '(214) 555-0100';
+const phoneHref = 'tel:+12145550100';
+// TODO: Replace with real phone number before launch
+
+const bgClass = {
+  teal: 'bg-teal-800',
+  dark: 'bg-slate-900',
+  light: 'bg-teal-50',
+}[variant];
+
+const textClass = {
+  teal: 'text-white',
+  dark: 'text-white',
+  light: 'text-slate-900',
+}[variant];
+
+const subClass = {
+  teal: 'text-teal-100',
+  dark: 'text-slate-300',
+  light: 'text-slate-600',
+}[variant];
+---
+
+<section class={`${bgClass} py-16 md:py-20`} aria-labelledby="cta-heading">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 id="cta-heading" class={`text-3xl md:text-4xl font-bold mb-3 ${textClass}`}>{heading}</h2>
+    <p class={`text-lg mb-8 ${subClass}`}>{subheading}</p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="/request-appointment/" class="btn-primary text-base px-8 py-4 w-full sm:w-auto justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Request Appointment
+      </a>
+      <a
+        href={phoneHref}
+        class={`inline-flex items-center justify-center gap-2.5 font-semibold text-base w-full sm:w-auto ${variant === 'light' ? 'text-teal-800' : 'text-white'} hover:opacity-80 transition-opacity`}
+        aria-label={`Call us at ${phone}`}
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+        </svg>
+        {phone}
+      </a>
+    </div>
+
+    <!-- Trust badges -->
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-6">
+      {['Same-Day Appointments', 'Board-Certified Specialists', 'Most Insurance Accepted', 'Bilingual (EN/ES)'].map(b => (
+        <div class={`flex items-center gap-2 text-sm ${variant === 'light' ? 'text-slate-600' : 'text-teal-100'}`}>
+          <svg class="w-4 h-4 text-coral-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          {b}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

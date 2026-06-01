@@ -1,0 +1,187 @@
+---
+interface Props {
+  heading?: string;
+  subheading?: string;
+  compact?: boolean;
+}
+
+const {
+  heading = 'Request Your Appointment',
+  subheading = 'Same-day appointments often available. We\'ll confirm within 1 business hour.',
+  compact = false,
+} = Astro.props;
+
+const conditions = [
+  'Back Pain', 'Neck Pain', 'Sciatica', 'Herniated Disc', 'Spinal Stenosis',
+  'Arthritis', 'Knee Pain', 'Shoulder Pain', 'Migraines & Headaches',
+  'Fibromyalgia', 'Neuropathy', 'Hip Pain', 'Joint Pain', 'Carpal Tunnel', 'Other',
+];
+
+const times = [
+  'Morning (8am–12pm)', 'Afternoon (12pm–5pm)', 'As soon as possible',
+];
+---
+
+<div class={compact ? '' : 'bg-teal-50 rounded-2xl p-8 md:p-12'}>
+  {!compact && (
+    <div class="text-center mb-8">
+      <h2 class="section-heading">{heading}</h2>
+      <p class="section-subheading max-w-xl mx-auto">{subheading}</p>
+    </div>
+  )}
+  {compact && (
+    <h3 class="text-xl font-bold text-slate-900 mb-1">{heading}</h3>
+    <p class="text-sm text-slate-600 mb-5">{subheading}</p>
+  )}
+
+  <!-- TODO: Wire this form to your CRM, email service, or Netlify Forms.
+       For Netlify Forms add: netlify data-netlify="true" netlify-honeypot="bot-field" to the <form> tag.
+       For other services, update the action attribute and add your endpoint URL. -->
+  <form
+    name="appointment-request"
+    method="POST"
+    action="/thank-you/"
+    class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+    novalidate
+    id="appointment-form"
+  >
+    <!-- Honeypot for spam -->
+    <input type="text" name="bot-field" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off" />
+
+    <div class="sm:col-span-2 sm:grid sm:grid-cols-2 sm:gap-4 contents">
+      <!-- Full Name -->
+      <div class="flex flex-col gap-1.5">
+        <label for="appt-name" class="text-sm font-medium text-slate-700">Full Name <span class="text-red-500" aria-label="required">*</span></label>
+        <input
+          type="text"
+          id="appt-name"
+          name="name"
+          required
+          autocomplete="name"
+          placeholder="Jane Smith"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
+        />
+      </div>
+
+      <!-- Phone -->
+      <div class="flex flex-col gap-1.5">
+        <label for="appt-phone" class="text-sm font-medium text-slate-700">Phone Number <span class="text-red-500" aria-label="required">*</span></label>
+        <input
+          type="tel"
+          id="appt-phone"
+          name="phone"
+          required
+          autocomplete="tel"
+          placeholder="(214) 555-0000"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="flex flex-col gap-1.5">
+        <label for="appt-email" class="text-sm font-medium text-slate-700">Email Address</label>
+        <input
+          type="email"
+          id="appt-email"
+          name="email"
+          autocomplete="email"
+          placeholder="jane@example.com"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
+        />
+      </div>
+
+      <!-- Condition -->
+      <div class="flex flex-col gap-1.5">
+        <label for="appt-condition" class="text-sm font-medium text-slate-700">Reason for Visit <span class="text-red-500" aria-label="required">*</span></label>
+        <select
+          id="appt-condition"
+          name="condition"
+          required
+          class="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
+        >
+          <option value="" disabled selected>Select a condition…</option>
+          {conditions.map(c => <option value={c}>{c}</option>)}
+        </select>
+      </div>
+
+      <!-- Preferred Time -->
+      <div class="flex flex-col gap-1.5 sm:col-span-2">
+        <label for="appt-time" class="text-sm font-medium text-slate-700">Preferred Appointment Time</label>
+        <select
+          id="appt-time"
+          name="preferred_time"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
+        >
+          <option value="" disabled selected>Select a time preference…</option>
+          {times.map(t => <option value={t}>{t}</option>)}
+        </select>
+      </div>
+
+      <!-- Message -->
+      <div class="flex flex-col gap-1.5 sm:col-span-2">
+        <label for="appt-message" class="text-sm font-medium text-slate-700">Tell us more about your pain (optional)</label>
+        <textarea
+          id="appt-message"
+          name="message"
+          rows="3"
+          placeholder="How long have you had this pain? What makes it better or worse?"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-shadow resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Consent -->
+      <div class="flex items-start gap-3 sm:col-span-2">
+        <input
+          type="checkbox"
+          id="appt-consent"
+          name="consent"
+          required
+          class="mt-0.5 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500 shrink-0"
+        />
+        <label for="appt-consent" class="text-xs text-slate-500 leading-relaxed">
+          I consent to being contacted by Dallas Pain Help about my appointment request by phone or email.
+          I understand this is not an emergency service — for medical emergencies, call 911.
+          <!-- TODO: Add link to privacy policy before launch -->
+        </label>
+      </div>
+
+      <!-- Error message -->
+      <div id="form-error" class="hidden sm:col-span-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3" role="alert" aria-live="polite"></div>
+
+      <!-- Submit -->
+      <div class="sm:col-span-2">
+        <button type="submit" class="btn-primary w-full justify-center text-base py-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Request My Appointment
+        </button>
+        <p class="text-xs text-slate-500 text-center mt-2">We respond within 1 business hour · Your information is secure</p>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('appointment-form') as HTMLFormElement | null;
+  const errorDiv = document.getElementById('form-error');
+
+  form?.addEventListener('submit', (e) => {
+    const name    = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+    const phone   = (form.elements.namedItem('phone') as HTMLInputElement).value.trim();
+    const cond    = (form.elements.namedItem('condition') as HTMLSelectElement).value;
+    const consent = (form.elements.namedItem('consent') as HTMLInputElement).checked;
+
+    if (!name || !phone || !cond || !consent) {
+      e.preventDefault();
+      if (errorDiv) {
+        errorDiv.textContent = 'Please fill in all required fields and accept the consent checkbox.';
+        errorDiv.classList.remove('hidden');
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      return;
+    }
+    errorDiv?.classList.add('hidden');
+    // TODO: Add conversion tracking here (GA4 event, GTM trigger, etc.)
+  });
+</script>

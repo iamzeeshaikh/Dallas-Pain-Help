@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import AppointmentForm from '../components/AppointmentForm.astro';
+---
+
+<BaseLayout
+  title="Request a Pain Appointment in Dallas, TX | Dallas Pain Help"
+  description="Request a same-day pain management appointment in Dallas. Back pain, sciatica, arthritis, nerve pain. Board-certified specialists. Call (214) 555-0100."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'Request Appointment' }]} />
+  </div>
+
+  <!-- Hero -->
+  <section
+    class="py-14"
+    style="background:linear-gradient(135deg,#0a4a50,#0E5C63,#1A8A99)"
+    aria-labelledby="appt-heading"
+  >
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 id="appt-heading" class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+        Request Your Appointment
+      </h1>
+      <p class="text-xl text-teal-100 mb-8 max-w-2xl mx-auto">
+        Take the first step toward living without pain. Same-day appointments are often available.
+        Board-certified pain specialists. Most insurance accepted.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-6">
+        {['Same-Day Available', 'Board-Certified Specialists', 'Most Insurance Accepted', 'Bilingual EN/ES'].map(b => (
+          <div class="flex items-center gap-2 text-sm text-teal-100">
+            <svg class="w-4 h-4 text-coral-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+            {b}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Form + trust signals -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid lg:grid-cols-3 gap-12">
+
+      <!-- Form -->
+      <div class="lg:col-span-2">
+        <AppointmentForm
+          heading="Book Your Visit"
+          subheading="Complete the form and we'll confirm within 1 business hour. For urgent pain, please call us directly."
+        />
+      </div>
+
+      <!-- Trust sidebar -->
+      <aside class="space-y-5">
+
+        <!-- Call option -->
+        <div class="card p-5 text-center">
+          <p class="text-sm font-medium text-slate-600 mb-2">Prefer to call?</p>
+          <a
+            href="tel:+12145550100"
+            class="text-2xl font-bold text-teal-700 hover:text-teal-800 transition-colors flex items-center justify-center gap-2"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            (214) 555-0100
+          </a>
+          <p class="text-xs text-slate-400 mt-1">Mon–Sat · Same-day availability</p>
+          <!-- TODO: Replace with real number and hours -->
+        </div>
+
+        <!-- What to expect -->
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-900 mb-4 text-sm">What to Expect</h3>
+          <ol class="space-y-3">
+            {[
+              { n: '1', text: 'Submit this form or call us' },
+              { n: '2', text: 'We confirm within 1 business hour' },
+              { n: '3', text: 'Arrive 15 min early (new patients)' },
+              { n: '4', text: 'Physician evaluation + treatment plan' },
+              { n: '5', text: 'Treatment may begin same day' },
+            ].map(step => (
+              <li class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white" style="background:#0E5C63">
+                  {step.n}
+                </span>
+                <span class="text-sm text-slate-600">{step.text}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <!-- What to bring -->
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-900 mb-3 text-sm">What to Bring</h3>
+          <ul class="space-y-2 text-sm text-slate-600">
+            {[
+              'Photo ID',
+              'Insurance card(s)',
+              'List of current medications',
+              'Any imaging reports (MRI, X-ray)',
+              'Prior medical records if available',
+            ].map(item => (
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-teal-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Insurance -->
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-900 mb-3 text-sm">Insurance Accepted</h3>
+          <p class="text-xs text-slate-500 mb-2">We accept most major plans including:</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            {['BCBS of Texas', 'UnitedHealthcare', 'Aetna', 'Cigna', 'Medicare', 'Medicaid', '+ most others'].map(ins => (
+              <li class="flex items-center gap-2">
+                <svg class="w-3 h-3 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {ins}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,310 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AppointmentForm from '../../components/AppointmentForm.astro';
+import CTASection from '../../components/CTASection.astro';
+import { locations } from '../../data/locations';
+import { conditions } from '../../data/conditions';
+import { treatments } from '../../data/treatments';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return locations.map(location => ({
+    params: { slug: location.slug },
+    props: { location },
+  }));
+};
+
+const { location } = Astro.props;
+
+const nearbyLocations = locations.filter(l => location.relatedLocations.includes(l.slug));
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': ['MedicalBusiness', 'LocalBusiness'],
+  name: `Dallas Pain Help — ${location.name}`,
+  description: `Board-certified pain management specialists serving ${location.name}, ${location.state} and the surrounding area.`,
+  url: `https://www.dallaspainhelp.com/locations/${location.slug}/`,
+  telephone: '+12145550100', // TODO: Replace with real number
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '1234 Medical Drive, Suite 100', // TODO: Replace with real address
+    addressLocality: 'Dallas',
+    addressRegion: 'TX',
+    postalCode: '75201',
+    addressCountry: 'US',
+  },
+  areaServed: { '@type': 'City', name: location.name, containedInPlace: { '@type': 'State', name: 'Texas' } },
+  medicalSpecialty: 'Pain Management',
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: location.faq.map(f => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+function renderBody(text: string): string {
+  const applyInline = (s: string) =>
+    s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  return text
+    .split('\n\n')
+    .map(para => {
+      const trimmed = para.trim();
+      if (trimmed.startsWith('<')) return trimmed;
+      if (/^\*\*[^*\n]+\*\*$/.test(trimmed)) return `<h3>${trimmed.slice(2, -2)}</h3>`;
+      if (/^\d+\.\s/.test(trimmed)) {
+        const items = trimmed.split('\n').filter(l => /^\d+\.\s/.test(l.trim()))
+          .map(l => `<li>${applyInline(l.replace(/^\d+\.\s/, ''))}</li>`).join('');
+        return `<ol>${items}</ol>`;
+      }
+      if (trimmed.startsWith('- ')) {
+        const items = trimmed.split('\n').filter(l => l.trim().startsWith('- '))
+          .map(l => `<li>${applyInline(l.trim().slice(2))}</li>`).join('');
+        return `<ul>${items}</ul>`;
+      }
+      return `<p>${applyInline(para)}</p>`;
+    })
+    .join('');
+}
+---
+
+<BaseLayout
+  title={location.metaTitle}
+  description={location.metaDescription}
+  schema={[localBusinessSchema, faqSchema]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[
+      { label: 'Service Areas', href: '/locations/' },
+      { label: `${location.name}, ${location.state}` },
+    ]} />
+  </div>
+
+  <!-- Hero -->
+  <section
+    class="py-14 md:py-18"
+    style="background:linear-gradient(135deg,#0a4a50,#0E5C63,#1A8A99)"
+    aria-labelledby="location-heading"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-block text-sm font-medium text-teal-200 mb-3">Pain Management · {location.name}, TX</span>
+        <h1 id="location-heading" class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+          {location.heroHeading}
+        </h1>
+        <p class="text-xl text-teal-100 leading-relaxed mb-8">{location.heroSubheading}</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/request-appointment/" class="btn-primary py-4 px-8">Request Appointment</a>
+          <a href="tel:+12145550100" class="btn-white py-4 px-8">
+            <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            (214) 555-0100
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid lg:grid-cols-3 gap-12">
+
+      <article class="lg:col-span-2">
+        <!-- Intro -->
+        <div class="text-xl text-slate-700 leading-relaxed mb-8 pb-8 border-b border-slate-100 font-light">
+          {location.intro}
+        </div>
+
+        <!-- Location facts -->
+        <div class="card p-6 mb-8">
+          <h2 class="text-lg font-bold text-slate-900 mb-4">{location.name}, TX — Key Facts</h2>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              <div>
+                <p class="text-xs text-slate-500 font-medium">County</p>
+                <p class="text-sm text-slate-800">{location.county}</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+              <div>
+                <p class="text-xs text-slate-500 font-medium">Population</p>
+                <p class="text-sm text-slate-800">{location.population}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <p class="text-xs text-slate-500 font-medium mb-2">Local Landmarks</p>
+            <div class="flex flex-wrap gap-1.5">
+              {location.nearbyLandmarks.map(lm => (
+                <span class="text-xs bg-teal-50 text-teal-700 rounded-full px-2.5 py-1">{lm}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="prose-medical" set:html={renderBody(location.body)} />
+
+        <!-- Image placeholder -->
+        <div
+          class="rounded-2xl flex flex-col items-center justify-center text-center p-10 my-8"
+          style="background:#f5f7f8; border: 1px dashed #90a4ae; min-height:200px"
+          role="img"
+          aria-label={`Pain management clinic serving ${location.name}, Texas`}
+        >
+          <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <p class="text-slate-400 text-sm">{location.name} area photo</p>
+          <p class="text-slate-300 text-xs mt-1">TODO: Replace with licensed photo of {location.name}, TX area (e.g., {location.nearbyLandmarks[0]}). Alt: "Pain management serving {location.name} Texas residents near {location.nearbyLandmarks[0]}"</p>
+        </div>
+
+        <!-- All conditions available -->
+        <section aria-labelledby="cond-loc-heading" class="mt-12">
+          <h2 id="cond-loc-heading" class="text-2xl font-bold text-slate-900 mb-5">
+            Conditions Treated for {location.name} Patients
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {conditions.map(c => (
+              <a href={`/conditions/${c.slug}/`} class="flex items-center gap-2 text-sm text-slate-600 hover:text-teal-700 transition-colors py-1.5 px-2 rounded-lg hover:bg-teal-50">
+                <svg class="w-3 h-3 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {c.shortName}
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <!-- Treatments available -->
+        <section aria-labelledby="tx-loc-heading" class="mt-12">
+          <h2 id="tx-loc-heading" class="text-2xl font-bold text-slate-900 mb-5">
+            Treatments Available Near {location.name}
+          </h2>
+          <div class="grid sm:grid-cols-2 gap-3">
+            {treatments.map(t => (
+              <a href={`/treatments/${t.slug}/`} class="card p-4 flex items-center gap-3 group">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:linear-gradient(135deg,#0E5C63,#1A8A99)">
+                  <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                </div>
+                <span class="text-sm font-medium text-slate-700 group-hover:text-teal-700 transition-colors">{t.name}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <!-- FAQ -->
+        <section aria-labelledby="faq-loc-heading" class="mt-12">
+          <h2 id="faq-loc-heading" class="text-2xl font-bold text-slate-900 mb-5">
+            Pain Management in {location.name} — FAQ
+          </h2>
+          <div class="space-y-3">
+            {location.faq.map((item, i) => (
+              <details class="card group" id={`faq-loc-${i}`}>
+                <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer list-none font-semibold text-slate-800 hover:text-teal-700 transition-colors select-none">
+                  {item.question}
+                  <svg class="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </summary>
+                <div class="px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                  {item.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6">
+        <div class="card p-6 sticky top-24">
+          <AppointmentForm
+            heading={`Request Appointment — ${location.name}`}
+            subheading="Same-day availability. Confirm within 1 hour."
+            compact={true}
+          />
+        </div>
+
+        {nearbyLocations.length > 0 && (
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-900 mb-3 text-sm">Nearby Service Areas</h3>
+            <ul class="space-y-2">
+              {nearbyLocations.map(l => (
+                <li>
+                  <a href={`/locations/${l.slug}/`} class="flex items-center gap-2 text-sm text-slate-600 hover:text-teal-700 transition-colors">
+                    <svg class="w-3.5 h-3.5 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Pain Management in {l.name}, TX
+                  </a>
+                </li>
+              ))}
+              <li class="pt-1">
+                <a href="/locations/" class="text-xs text-teal-600 hover:text-teal-700 font-medium">View all locations →</a>
+              </li>
+            </ul>
+          </div>
+        )}
+
+        <!-- Map placeholder -->
+        <div class="card overflow-hidden">
+          <div
+            class="flex flex-col items-center justify-center text-center p-8"
+            style="background:#f5f7f8; min-height:180px"
+            role="img"
+            aria-label={`Map showing Dallas Pain Help serving ${location.name}, TX`}
+          >
+            <svg class="w-10 h-10 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+            <p class="text-slate-400 text-xs">Map placeholder</p>
+            <p class="text-slate-300 text-xs mt-1">TODO: Embed Google Maps or Mapbox map here</p>
+          </div>
+          <div class="p-4 border-t border-slate-100">
+            <a
+              href={`https://maps.google.com/?q=Pain+Management+${encodeURIComponent(location.name)}+TX`}
+              {/* TODO: Replace with real clinic address coordinates before launch */}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-teal-600 font-medium hover:text-teal-700 flex items-center gap-1"
+            >
+              Get Directions
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#0E5C63,#1A8A99)" class="rounded-2xl p-5 text-white">
+          <h3 class="font-bold mb-2 text-sm">Pain Management Near {location.name}</h3>
+          <p class="text-teal-100 text-xs leading-relaxed mb-4">
+            Expert pain care conveniently accessible from {location.name}, {location.county}.
+            Same-day appointments. Most insurance accepted.
+          </p>
+          <a href="tel:+12145550100" class="btn-white w-full justify-center text-sm py-3">
+            Call (214) 555-0100
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <CTASection heading={`Expert Pain Management Near ${location.name}, TX`} />
+</BaseLayout>

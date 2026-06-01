@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import AppointmentForm from '../components/AppointmentForm.astro';
+
+const phone = '(214) 555-0100';
+const phoneHref = 'tel:+12145550100';
+// TODO: Replace with real contact details before launch
+const address = '1234 Medical Drive, Suite 100, Dallas, TX 75201';
+const email = 'info@dallaspainhelp.com';
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'MedicalBusiness',
+  name: 'Dallas Pain Help',
+  telephone: '+12145550100',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '1234 Medical Drive, Suite 100',
+    addressLocality: 'Dallas',
+    addressRegion: 'TX',
+    postalCode: '75201',
+    addressCountry: 'US',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: 32.7767, longitude: -96.7970 },
+  url: 'https://www.dallaspainhelp.com/contact/',
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '08:00', closes: '18:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:00', closes: '13:00' },
+  ],
+};
+---
+
+<BaseLayout
+  title="Contact Dallas Pain Help | Pain Management in Dallas, TX"
+  description="Contact Dallas Pain Help for pain management appointments, directions, and clinic hours. Call (214) 555-0100. Same-day appointments available."
+  schema={localBusinessSchema}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'Contact Us' }]} />
+  </div>
+
+  <!-- Hero -->
+  <section
+    class="py-14"
+    style="background:linear-gradient(135deg,#0a4a50,#0E5C63)"
+    aria-labelledby="contact-heading"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 id="contact-heading" class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+        Contact Us
+      </h1>
+      <p class="text-xl text-teal-100">
+        Same-day appointments available. Our team responds within 1 business hour.
+      </p>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid lg:grid-cols-2 gap-16">
+
+      <!-- Contact info -->
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-8">Clinic Information</h2>
+
+        <div class="space-y-6">
+          <!-- Phone -->
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style="background:#e0f5f7">
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Phone</p>
+              <a href={phoneHref} class="text-xl font-bold text-teal-700 hover:text-teal-800 transition-colors">{phone}</a>
+              <p class="text-sm text-slate-500 mt-0.5">Click to call on mobile. Interpreted services available.</p>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style="background:#e0f5f7">
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Address</p>
+              <address class="not-italic text-slate-800 font-medium">{address}</address>
+              <!-- TODO: Replace with real address -->
+              <a
+                href="https://maps.google.com/?q=1234+Medical+Drive+Suite+100+Dallas+TX+75201"
+                {/* TODO: Replace with real clinic address coordinates before launch */}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-teal-600 hover:text-teal-700 mt-1 inline-flex items-center gap-1"
+              >
+                Get Directions
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Hours -->
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style="background:#e0f5f7">
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">Hours</p>
+              <!-- TODO: Replace with real clinic hours -->
+              <div class="space-y-1 text-sm text-slate-700">
+                {[
+                  ['Monday – Friday', '8:00 AM – 6:00 PM'],
+                  ['Saturday', '9:00 AM – 1:00 PM'],
+                  ['Sunday', 'Closed'],
+                ].map(([day, hours]) => (
+                  <div class="flex justify-between gap-6">
+                    <span class="font-medium">{day}</span>
+                    <span class="text-slate-500">{hours}</span>
+                  </div>
+                ))}
+              </div>
+              <!-- TODO: Replace with verified clinic hours before launch -->
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style="background:#e0f5f7">
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Email</p>
+              <a href={`mailto:${email}`} class="text-teal-700 hover:text-teal-800 font-medium">{email}</a>
+              <!-- TODO: Replace with real email address -->
+              <p class="text-xs text-slate-400 mt-0.5">For non-urgent inquiries only</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map placeholder -->
+        <div
+          class="rounded-2xl flex flex-col items-center justify-center text-center p-12 mt-8"
+          style="background:#f5f7f8; border: 1px dashed #90a4ae; min-height:240px"
+          role="img"
+          aria-label="Map showing Dallas Pain Help clinic location"
+        >
+          <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+          <p class="text-slate-400 text-sm font-medium">Interactive map placeholder</p>
+          <!-- TODO: Embed real clinic map here before launch -->
+        </div>
+      </div>
+
+      <!-- Contact / Appointment form -->
+      <div>
+        <AppointmentForm
+          heading="Request an Appointment"
+          subheading="Fill out the form below and our team will confirm your appointment within 1 business hour."
+        />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

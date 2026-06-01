@@ -1,0 +1,635 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AppointmentForm from '../components/AppointmentForm.astro';
+import CTASection from '../components/CTASection.astro';
+import { conditions } from '../data/conditions';
+import { treatments } from '../data/treatments';
+import { locations } from '../data/locations';
+
+const phone = '(214) 555-0100';
+const phoneHref = 'tel:+12145550100';
+// TODO: Replace with real clinic phone number before launch
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': ['MedicalBusiness', 'LocalBusiness'],
+  name: 'Dallas Pain Help',
+  description: 'Board-certified pain management specialists serving Dallas–Fort Worth. Minimally invasive treatments for chronic and acute pain.',
+  url: 'https://www.dallaspainhelp.com/',
+  telephone: '+12145550100', // TODO: Replace with real number
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '1234 Medical Drive, Suite 100', // TODO: Replace with real address
+    addressLocality: 'Dallas',
+    addressRegion: 'TX',
+    postalCode: '75201', // TODO: Replace with real ZIP
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 32.7767, // TODO: Replace with real coordinates
+    longitude: -96.7970,
+  },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '08:00', closes: '18:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:00', closes: '13:00' },
+  ],
+  areaServed: ['Dallas', 'Plano', 'Irving', 'Arlington', 'Frisco', 'Garland', 'Mesquite', 'Richardson', 'Carrollton', 'McKinney', 'Grand Prairie', 'Denton', 'Lewisville'],
+  priceRange: '$$', // TODO: Verify before launch
+  medicalSpecialty: 'Pain Management',
+  // TODO: Add real review/rating data below — do NOT fabricate these values
+  // aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '150' }
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Dallas Pain Help',
+  url: 'https://www.dallaspainhelp.com/',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://www.dallaspainhelp.com/?s={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What types of pain do you treat in Dallas?',
+      acceptedAnswer: { '@type': 'Answer', text: 'We treat all types of chronic and acute pain including back pain, neck pain, sciatica, arthritis, knee pain, shoulder pain, migraines, neuropathy, fibromyalgia, and more. Our board-certified pain management physicians offer a full range of minimally invasive treatments.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you accept insurance for pain management in Dallas?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes — we accept most major insurance plans including Blue Cross Blue Shield of Texas, UnitedHealthcare, Aetna, Cigna, Medicare, and Medicaid. Our team verifies your benefits before your first appointment so there are no surprises.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are same-day pain management appointments available in Dallas?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Same-day and next-day appointments are frequently available at our Dallas clinic. Call our office or use the online appointment request form and we will confirm within 1 business hour.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need a referral to see a pain management doctor in Dallas?',
+      acceptedAnswer: { '@type': 'Answer', text: 'In most cases, no referral is required. Many insurance plans allow direct access to pain management specialists. We recommend checking with your insurance plan, and our team can help verify your specific coverage.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Will I need surgery for my pain?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The vast majority of chronic pain conditions can be effectively managed without surgery using minimally invasive procedures such as epidural steroid injections, nerve blocks, radiofrequency ablation, and spinal cord stimulation. Surgery is considered only when conservative and interventional options have been exhausted.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'What should I bring to my first pain management appointment?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Please bring your photo ID, insurance card, a list of current medications, any relevant imaging (MRI, CT, X-ray) on disc or reports, and any prior medical records related to your pain condition. Arriving 15 minutes early for new patient paperwork is appreciated.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the difference between a pain management specialist and a primary care doctor?',
+      acceptedAnswer: { '@type': 'Answer', text: 'A pain management specialist completes fellowship training beyond residency specifically in diagnosing and treating pain conditions with advanced interventional procedures. Primary care physicians are generalists who refer to pain specialists for complex or treatment-resistant pain that requires specialized expertise.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'How quickly will I feel relief after a pain management procedure?',
+      acceptedAnswer: { '@type': 'Answer', text: 'It depends on the procedure. Nerve blocks with local anesthetic provide relief within minutes. Epidural steroid injections typically begin working in 3–5 days. Radiofrequency ablation takes 2–4 weeks. PRP therapy shows gradual improvement over 4–12 weeks. Your physician will set specific expectations at your consultation.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is pain management only for older patients?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Pain management treats patients of all ages — from younger adults with sports injuries and disc herniations to older patients with spinal stenosis and osteoarthritis. We customize every treatment plan to the patient\'s age, lifestyle, and goals.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I continue to take my current medications while receiving pain management care?',
+      acceptedAnswer: { '@type': 'Answer', text: 'In most cases, yes. Your pain management physician will review your medication list at your first visit and give specific instructions for each procedure — some blood thinners may need to be paused before injections, coordinated with your primary care doctor.' },
+    },
+  ],
+};
+
+const conditionIcons: Record<string, string> = {
+  'back-pain': 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z',
+  'neck-pain': 'M17 8C8 10 5.9 16.17 3.82 21.3c-.58 1.5 1.26 2.7 2.37 1.65C7.5 21.69 9.5 21 12 21c5.52 0 10-4.48 10-10 0-4.08-2.44-7.58-6-9.16V8c0-1.1-.9-2-2-2s-2 .9-2 2z',
+  'sciatica': 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
+};
+
+const treatmentIcons: Record<string, string> = {
+  'epidural-steroid-injection': 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10',
+  'nerve-block': 'M13 10V3L4 14h7v7l9-11h-7z',
+  'spinal-cord-stimulation': 'M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v10m0 0H5a2 2 0 01-2-2V9m6 4h10a2 2 0 002-2V9m-6 4v8m0 0H9m6 0h4',
+};
+
+const stats = [
+  { value: '15+', label: 'Years of Experience', note: '// TODO: Replace with verified figure' },
+  { value: '5,000+', label: 'Patients Treated', note: '// TODO: Replace with verified figure' },
+  { value: '95%', label: 'Patient Satisfaction', note: '// TODO: Replace with real survey data' },
+  { value: '13', label: 'DFW Areas Served', note: '' },
+];
+
+const testimonials = [
+  // TODO: Replace with real, verifiable patient testimonials. Obtain written consent.
+  // Do NOT publish fabricated reviews — this violates FTC guidelines and can harm patients.
+  {
+    name: 'Patient Name Here',
+    location: 'Dallas, TX',
+    text: 'TODO: Replace this with a real patient testimonial. Obtain written consent and HIPAA authorization before publishing.',
+    rating: 5,
+  },
+  {
+    name: 'Patient Name Here',
+    location: 'Plano, TX',
+    text: 'TODO: Replace this with a real patient testimonial. Obtain written consent and HIPAA authorization before publishing.',
+    rating: 5,
+  },
+  {
+    name: 'Patient Name Here',
+    location: 'Frisco, TX',
+    text: 'TODO: Replace this with a real patient testimonial. Obtain written consent and HIPAA authorization before publishing.',
+    rating: 5,
+  },
+];
+---
+
+<BaseLayout
+  title="Pain Management in Dallas, TX | Dallas Pain Help"
+  description="Expert pain management in Dallas, TX. Board-certified specialists for back pain, sciatica, arthritis & more. Same-day appointments. Call (214) 555-0100."
+  schema={[localBusinessSchema, websiteSchema, faqSchema]}
+>
+
+  <!-- ══════════════════════════════════════════════════════════
+       HERO SECTION
+  ══════════════════════════════════════════════════════════ -->
+  <section
+    class="relative overflow-hidden"
+    style="background: linear-gradient(135deg, #0a4a50 0%, #0E5C63 40%, #147078 70%, #1A8A99 100%)"
+    aria-labelledby="hero-heading"
+  >
+    <!-- Decorative background pattern -->
+    <div class="absolute inset-0 opacity-5" aria-hidden="true">
+      <svg width="100%" height="100%">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+      </svg>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 lg:py-32">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <!-- Left: Copy -->
+        <div>
+          <!-- Trust badge -->
+          <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
+            <span class="w-2 h-2 rounded-full bg-coral-400 shrink-0"></span>
+            <span class="text-sm text-teal-50 font-medium">Board-Certified Pain Specialists · Dallas, TX</span>
+          </div>
+
+          <h1 id="hero-heading" class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-5">
+            Expert Pain Relief<br />
+            <span style="color:#F4A259">in Dallas, TX</span>
+          </h1>
+
+          <p class="text-xl text-teal-100 leading-relaxed mb-8 max-w-lg">
+            Minimally invasive treatments for back pain, sciatica, arthritis, and all chronic pain conditions.
+            Most insurance accepted. Same-day appointments available.
+          </p>
+
+          <!-- Trust badges row -->
+          <div class="flex flex-wrap gap-3 mb-8">
+            {['Same-Day Appointments', 'Most Insurance Accepted', 'Board-Certified Specialists'].map(b => (
+              <span class="flex items-center gap-1.5 text-sm text-teal-50 bg-white/10 rounded-full px-3 py-1.5">
+                <svg class="w-3.5 h-3.5 text-coral-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {b}
+              </span>
+            ))}
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="/request-appointment/" class="btn-primary text-base py-4 px-8 justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              Request Appointment
+            </a>
+            <a
+              href={phoneHref}
+              class="btn-white text-base py-4 px-8 justify-center"
+              aria-label={`Call ${phone}`}
+            >
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+              </svg>
+              {phone}
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Image placeholder + quick form teaser -->
+        <div class="relative">
+          <!-- Hero image placeholder -->
+          <!-- TODO: Replace this SVG placeholder with a real, licensed photo of doctor-patient consultation -->
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-teal-900/40" style="aspect-ratio:4/3">
+            <div class="absolute inset-0 flex flex-col items-center justify-center" style="background:linear-gradient(145deg,#147078,#0a4a50)">
+              <svg class="w-24 h-24 text-teal-400/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              <p class="text-teal-300/70 text-sm text-center px-4">
+                <!-- TODO: Replace with licensed photo of physician and patient in consultation -->
+                Doctor-patient consultation image<br /><span class="text-xs opacity-60">(replace with real licensed photo)</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Floating badge -->
+          <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 max-w-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:#e0f5f7">
+                <svg class="w-5 h-5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-slate-900">Same-day available</p>
+                <p class="text-xs text-slate-500">Call or request online</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CONDITIONS GRID
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20 bg-white" aria-labelledby="conditions-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 id="conditions-heading" class="section-heading">Conditions We Treat in Dallas</h2>
+        <p class="section-subheading max-w-2xl mx-auto">
+          From back pain and sciatica to arthritis and neuropathy — we diagnose the root cause
+          and deliver targeted, minimally invasive treatment.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {conditions.map(condition => (
+          <a
+            href={`/conditions/${condition.slug}/`}
+            class="card p-4 flex flex-col items-center text-center gap-2.5 group"
+          >
+            <div
+              class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200"
+              style="background:#e0f5f7"
+            >
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-slate-800 group-hover:text-teal-700 transition-colors leading-tight">
+              {condition.shortName}
+            </span>
+          </a>
+        ))}
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="/conditions/" class="btn-secondary">View All Conditions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TREATMENTS GRID
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20" style="background:#f5f7f8" aria-labelledby="treatments-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 id="treatments-heading" class="section-heading">Our Pain Management Treatments</h2>
+        <p class="section-subheading max-w-2xl mx-auto">
+          Advanced, evidence-based procedures performed by fellowship-trained pain management physicians
+          at our Dallas clinic.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {treatments.map(treatment => (
+          <a href={`/treatments/${treatment.slug}/`} class="card p-6 flex flex-col gap-3 group">
+            <div
+              class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+              style="background:linear-gradient(135deg,#0E5C63,#1A8A99)"
+            >
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-slate-900 group-hover:text-teal-700 transition-colors leading-tight">
+              {treatment.shortName}
+            </h3>
+            <p class="text-sm text-slate-500 leading-relaxed line-clamp-3">
+              {treatment.intro.slice(0, 100)}…
+            </p>
+            <span class="text-sm text-teal-600 font-medium mt-auto flex items-center gap-1">
+              Learn more
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="/treatments/" class="btn-secondary">View All Treatments</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       WHY CHOOSE US
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20 bg-white" aria-labelledby="why-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 id="why-heading" class="section-heading mb-4">
+            Why Dallas Patients Choose Us for Pain Management
+          </h2>
+          <p class="text-slate-600 leading-relaxed mb-8">
+            At Dallas Pain Help, we combine board-certified expertise, the latest minimally invasive
+            procedures, and genuine compassion to deliver outcomes that change lives. Pain should not
+            be accepted as inevitable — and it doesn't have to be.
+          </p>
+
+          <div class="space-y-5">
+            {[
+              {
+                icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+                title: 'Board-Certified Specialists',
+                // TODO: Verify board certifications before launch
+                desc: 'Our physicians hold board certification in Pain Medicine and fellowship training in interventional pain management — meaning you see a physician with advanced, subspecialty expertise in diagnosing and treating pain.',
+              },
+              {
+                icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+                title: 'Same-Day Appointments',
+                desc: 'Pain doesn\'t wait — neither should you. We routinely offer same-day and next-day appointments for both new and established patients.',
+              },
+              {
+                icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z',
+                title: 'Most Insurance Accepted',
+                desc: 'We accept Blue Cross Blue Shield of Texas, Aetna, Cigna, UnitedHealthcare, Medicare, Medicaid, and most major plans. We verify your benefits before your visit.',
+              },
+              {
+                icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+                title: 'Bilingual Care (English & Spanish)',
+                desc: 'Our bilingual team serves Dallas\'s diverse community with full Spanish-language consultations, ensuring every patient receives accurate, culturally sensitive care.',
+              },
+            ].map(item => (
+              <div class="flex gap-4">
+                <div
+                  class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                  style="background:#e0f5f7"
+                >
+                  <svg class="w-5 h-5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d={item.icon}/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-slate-900 mb-0.5">{item.title}</h3>
+                  <p class="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 gap-5">
+          {stats.map(stat => (
+            <div class="card p-6 text-center">
+              <div class="text-4xl font-bold mb-1" style="color:#0E5C63">{stat.value}</div>
+              <div class="text-sm font-medium text-slate-700">{stat.label}</div>
+              {/* TODO: Replace stat values with verified figures before launch */}
+            </div>
+          ))}
+          <!-- Hero image 2 -->
+          <!-- TODO: Replace with real licensed clinic interior photo -->
+          <div
+            class="col-span-2 rounded-2xl flex flex-col items-center justify-center text-center p-8"
+            style="background:linear-gradient(135deg,#e0f5f7,#f0fbfc); min-height:180px; border: 1px dashed #4bbdcc"
+          >
+            <svg class="w-12 h-12 text-teal-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-teal-600 text-sm font-medium">Clinic interior photo</p>
+            <p class="text-teal-400 text-xs mt-1">TODO: Replace with real licensed photo of clinic</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AREAS WE SERVE
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20" style="background:#f5f7f8" aria-labelledby="locations-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 id="locations-heading" class="section-heading">Pain Management Across the DFW Metroplex</h2>
+        <p class="section-subheading max-w-2xl mx-auto">
+          Serving Dallas and all major surrounding communities — expert pain care close to where you live.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {locations.map(loc => (
+          <a
+            href={`/locations/${loc.slug}/`}
+            class="card px-4 py-3.5 flex items-center gap-2.5 group"
+          >
+            <svg class="w-4 h-4 text-teal-500 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <span class="text-sm font-medium text-slate-700 group-hover:text-teal-700 transition-colors">
+              {loc.name}, {loc.state}
+            </span>
+          </a>
+        ))}
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="/locations/" class="btn-secondary">View All Service Areas</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TRUST SIGNALS
+       TODO: Replace this section with real patient testimonials once
+       written consent + HIPAA authorization is obtained. Do NOT
+       publish fabricated reviews — FTC guidelines prohibit this.
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20 bg-white" aria-labelledby="trust-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 id="trust-heading" class="section-heading">Why Dallas Trusts Us for Pain Care</h2>
+        <p class="section-subheading max-w-xl mx-auto">
+          A pain management practice built on accurate diagnosis, the least invasive effective treatment, and honest communication with every patient.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        {[
+          {
+            icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+            title: 'Accurate Diagnosis First',
+            body: 'We invest the time to find the precise source of your pain before recommending any treatment. The right diagnosis is the foundation of everything that follows.',
+          },
+          {
+            icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+            title: 'Fast Access to Care',
+            body: 'Same-day and next-day appointments are routinely available. We know that every day spent waiting is a day lost from your work, family, and life in Dallas.',
+          },
+          {
+            icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+            title: 'Care Without Barriers',
+            body: 'We accept most major insurance plans and offer bilingual English/Spanish consultations. Our goal is to make expert pain management accessible to every Dallas patient.',
+          },
+        ].map(item => (
+          <div class="card p-7 flex flex-col gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style="background:#e0f5f7">
+              <svg class="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d={item.icon}/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 mb-2">{item.title}</h3>
+              <p class="text-sm text-slate-600 leading-relaxed">{item.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20" style="background:linear-gradient(135deg,#0E5C63,#1A8A99)" aria-labelledby="how-heading">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 id="how-heading" class="text-3xl md:text-4xl font-bold text-white mb-3">Your Path to Pain Relief</h2>
+      <p class="text-teal-100 text-lg mb-12">Three simple steps to living without pain in Dallas.</p>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        {[
+          { step: '01', title: 'Call or Request Online', desc: 'Call (214) 555-0100 or submit our online form. Same-day appointments are often available. We\'ll confirm within 1 business hour.' },
+          { step: '02', title: 'Expert Consultation', desc: 'A board-certified pain management physician evaluates your pain, reviews imaging, and creates a personalized treatment plan designed for your goals.' },
+          { step: '03', title: 'Get Relief & Live Fully', desc: 'Begin your treatment — often in the same visit. Return to the activities you love in Dallas without pain limiting you.' },
+        ].map(item => (
+          <div class="flex flex-col items-center">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-2xl font-bold text-teal-800" style="background:rgba(255,255,255,0.15); backdrop-filter:blur(4px); color:white; border:1px solid rgba(255,255,255,0.2)">
+              {item.step}
+            </div>
+            <h3 class="text-white font-bold text-lg mb-2">{item.title}</h3>
+            <p class="text-teal-100 text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FAQ SECTION
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20 bg-white" aria-labelledby="faq-heading">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 id="faq-heading" class="section-heading">Frequently Asked Questions</h2>
+        <p class="section-subheading">Everything you need to know about pain management care in Dallas.</p>
+      </div>
+
+      <div class="space-y-4">
+        {[
+          {
+            q: 'What types of pain do you treat in Dallas?',
+            a: 'We treat all types of chronic and acute pain including back pain, neck pain, sciatica, arthritis, knee pain, shoulder pain, migraines, neuropathy, fibromyalgia, and more. Our board-certified pain management physicians offer a full range of minimally invasive treatments.',
+          },
+          {
+            q: 'Do you accept insurance for pain management in Dallas?',
+            a: 'Yes — we accept most major insurance plans including Blue Cross Blue Shield of Texas, UnitedHealthcare, Aetna, Cigna, Medicare, and Medicaid. Our team verifies your benefits before your first appointment so there are no surprises.',
+          },
+          {
+            q: 'Are same-day pain management appointments available?',
+            a: 'Same-day and next-day appointments are frequently available at our Dallas clinic. Call our office or use the online appointment request form and we will confirm within 1 business hour.',
+          },
+          {
+            q: 'Do I need a referral to see a pain management doctor in Dallas?',
+            a: 'In most cases, no referral is required. Many insurance plans allow direct access to pain management specialists. We recommend checking with your insurance plan, and our team can help verify your specific coverage.',
+          },
+          {
+            q: 'Will I need surgery for my pain?',
+            a: 'The vast majority of chronic pain conditions can be effectively managed without surgery using minimally invasive procedures such as epidural steroid injections, nerve blocks, radiofrequency ablation, and spinal cord stimulation. Surgery is considered only when conservative and interventional options have been exhausted.',
+          },
+          {
+            q: 'What should I bring to my first pain management appointment?',
+            a: 'Please bring your photo ID, insurance card, a list of current medications, any relevant imaging (MRI, CT, X-ray) on disc or reports, and any prior medical records related to your pain condition. Arriving 15 minutes early for new patient paperwork is appreciated.',
+          },
+          {
+            q: 'What is the difference between a pain management specialist and a primary care doctor?',
+            a: 'A pain management specialist completes fellowship training beyond residency specifically in diagnosing and treating pain conditions with advanced interventional procedures — epidural injections, nerve blocks, radiofrequency ablation, and spinal cord stimulation. Primary care physicians are generalists who refer to pain specialists for complex or treatment-resistant pain that requires specialized expertise.',
+          },
+          {
+            q: 'How quickly will I feel relief after a pain management procedure?',
+            a: 'It depends on the procedure. Nerve blocks with local anesthetic provide relief within minutes. Epidural steroid injections typically begin working in 3–5 days with full effect at 2 weeks. Radiofrequency ablation takes 2–4 weeks as the ablated nerve fully loses function. PRP therapy shows gradual improvement over 4–12 weeks. Your physician will set specific expectations at your consultation.',
+          },
+          {
+            q: 'Is pain management only for older patients?',
+            a: 'Pain management treats patients of all ages. Younger adults commonly present with sports injuries, herniated discs from active lifestyles, and occupational injuries. Middle-aged patients frequently have degenerative disc disease and joint arthritis. Older adults present with spinal stenosis, severe osteoarthritis, and neuropathy. We customize every treatment plan to the patient\'s age, lifestyle, and goals.',
+          },
+          {
+            q: 'Can I continue to take my current medications while receiving pain management care?',
+            a: 'In most cases, yes. Your pain management physician will review your medication list at your first visit. Some blood thinners may need to be paused before procedures. NSAIDs should be stopped before PRP injections. Your physician will give you specific instructions for each procedure, always coordinated with your primary care doctor to avoid any interactions.',
+          },
+        ].map((item, i) => (
+          <details class="card group" id={`faq-${i}`}>
+            <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer list-none font-semibold text-slate-800 hover:text-teal-700 transition-colors select-none">
+              {item.q}
+              <svg class="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4 mt-0">
+              {item.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       APPOINTMENT FORM SECTION
+  ══════════════════════════════════════════════════════════ -->
+  <section class="py-20 bg-teal-50" aria-labelledby="appt-form-heading">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <AppointmentForm
+        heading="Request Your Appointment Today"
+        subheading="Fill out the form below and we'll confirm your appointment within 1 business hour. Same-day appointments are often available."
+      />
+    </div>
+  </section>
+
+  <CTASection
+    heading="Ready to Live Without Pain in Dallas?"
+    subheading="Call us now or request an appointment online. Same-day availability. Most insurance accepted."
+    variant="dark"
+  />
+</BaseLayout>

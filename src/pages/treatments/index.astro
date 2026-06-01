@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CTASection from '../../components/CTASection.astro';
+import { treatments } from '../../data/treatments';
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Pain Management Treatments in Dallas, TX',
+  description: 'Full list of minimally invasive pain management treatments offered by Dallas Pain Help — injections, nerve blocks, RF ablation, PRP, spinal cord stimulation.',
+  url: 'https://www.dallaspainhelp.com/treatments/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: treatments.map((t, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: t.name,
+      url: `https://www.dallaspainhelp.com/treatments/${t.slug}/`,
+    })),
+  },
+};
+---
+
+<BaseLayout
+  title="Pain Management Treatments in Dallas, TX | Dallas Pain Help"
+  description="All pain management treatments at our Dallas clinic — epidural injections, nerve blocks, radiofrequency ablation, PRP, spinal cord stimulation, and more."
+  schema={collectionSchema}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'Treatments' }]} />
+  </div>
+
+  <section class="py-14 bg-white border-b border-slate-100" aria-labelledby="tx-index-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <h1 id="tx-index-heading" class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-4">
+          Pain Management Treatments in Dallas, TX
+        </h1>
+        <p class="text-xl text-slate-600 leading-relaxed">
+          Our Dallas pain management physicians offer the full spectrum of minimally invasive,
+          evidence-based treatments — from targeted injections to advanced neuromodulation.
+          Every treatment is selected based on your specific diagnosis and goals.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white" aria-label="All treatments">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {treatments.map(treatment => (
+          <a href={`/treatments/${treatment.slug}/`} class="card p-7 flex flex-col gap-4 group">
+            <div
+              class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+              style="background:linear-gradient(135deg,#0E5C63,#1A8A99)"
+            >
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 group-hover:text-teal-700 transition-colors mb-2 leading-tight">
+                {treatment.name}
+              </h2>
+              <p class="text-sm text-slate-500 leading-relaxed">{treatment.intro.slice(0, 130)}…</p>
+            </div>
+            <div class="mt-auto">
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                {treatment.conditions.slice(0, 3).map(c => (
+                  <span class="text-xs bg-teal-50 text-teal-700 rounded-full px-2.5 py-1 capitalize">
+                    {c.replace(/-/g, ' ')}
+                  </span>
+                ))}
+              </div>
+              <span class="text-sm text-teal-600 font-medium flex items-center gap-1">
+                Learn more
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    heading="Not Sure Which Treatment Is Right for You?"
+    subheading="Our pain specialists diagnose the root cause and recommend the most targeted, effective treatment for your specific condition."
+    variant="teal"
+  />
+</BaseLayout>

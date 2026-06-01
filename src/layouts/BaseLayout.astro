@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  image?: string;
+  schema?: object | object[];
+  noindex?: boolean;
+}
+
+const { title, description, canonical, image, schema, noindex } = Astro.props;
+const phone = '(214) 555-0100';
+const phoneHref = 'tel:+12145550100';
+// TODO: Replace with real clinic phone number before launch
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical}
+      image={image}
+      schema={schema}
+      noindex={noindex}
+    />
+  </head>
+  <body>
+    <!-- GTM noscript fallback - TODO: Add real GTM ID -->
+    <!--
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    -->
+
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-teal-700 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold">
+      Skip to main content
+    </a>
+
+    <Header />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Mobile sticky CTA -->
+    <div class="mobile-sticky-cta md:hidden">
+      <div class="flex gap-2">
+        <a href={phoneHref} class="flex-1 btn-secondary text-center text-sm py-3 justify-center">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+          Call Now
+        </a>
+        <a href="/request-appointment/" class="flex-1 btn-primary text-center text-sm py-3 justify-center">
+          Book Appointment
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

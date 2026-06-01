@@ -1,0 +1,153 @@
+---
+import { conditions } from '../data/conditions';
+import { treatments } from '../data/treatments';
+import { locations } from '../data/locations';
+
+const phone = '(214) 555-0100';
+const phoneHref = 'tel:+12145550100';
+// TODO: Replace with real clinic phone number before launch
+const address = '1234 Medical Drive, Suite 100, Dallas, TX 75201';
+// TODO: Replace with real clinic address before launch
+const email = 'info@dallaspainhelp.com';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-slate-900 text-slate-300">
+  <!-- Main footer grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+
+      <!-- Brand + NAP -->
+      <div class="lg:col-span-2">
+        <a href="/" class="inline-flex items-center gap-2.5 mb-4" aria-label="Dallas Pain Help home">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#0E5C63,#1A8A99)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+            </svg>
+          </div>
+          <span class="text-white font-bold text-lg">Dallas<span class="text-coral-400">Pain</span>Help</span>
+        </a>
+        <p class="text-sm leading-relaxed mb-5 text-slate-400">
+          Board-certified pain management specialists serving the Dallas–Fort Worth Metroplex.
+          Minimally invasive treatments for chronic and acute pain.
+        </p>
+
+        <!-- NAP — consistent for Local SEO -->
+        <address class="not-italic text-sm space-y-2">
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 mt-0.5 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <span>{address}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            <a href={phoneHref} class="hover:text-white transition-colors">{phone}</a>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+            </svg>
+            <span>Mon–Fri 8am–6pm, Sat 9am–1pm</span>
+            <!-- TODO: Replace with real clinic hours before launch -->
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <a href={`mailto:${email}`} class="hover:text-white transition-colors">{email}</a>
+          </div>
+        </address>
+
+        <!-- Trust badges -->
+        <div class="mt-6 flex flex-wrap gap-3">
+          <span class="text-xs bg-slate-800 text-teal-300 rounded-full px-3 py-1">Board Certified</span>
+          <span class="text-xs bg-slate-800 text-teal-300 rounded-full px-3 py-1">Most Insurance Accepted</span>
+          <span class="text-xs bg-slate-800 text-teal-300 rounded-full px-3 py-1">Same-Day Appointments</span>
+        </div>
+      </div>
+
+      <!-- Conditions -->
+      <div>
+        <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Conditions</h3>
+        <ul class="space-y-2">
+          {conditions.map(c => (
+            <li>
+              <a href={`/conditions/${c.slug}/`} class="text-sm text-slate-400 hover:text-teal-300 transition-colors">
+                {c.shortName}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/conditions/" class="text-sm text-teal-400 hover:text-teal-300 font-medium transition-colors">
+              All Conditions →
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Treatments -->
+      <div>
+        <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Treatments</h3>
+        <ul class="space-y-2">
+          {treatments.map(t => (
+            <li>
+              <a href={`/treatments/${t.slug}/`} class="text-sm text-slate-400 hover:text-teal-300 transition-colors">
+                {t.shortName}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/treatments/" class="text-sm text-teal-400 hover:text-teal-300 font-medium transition-colors">
+              All Treatments →
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Locations + Quick links -->
+      <div>
+        <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Service Areas</h3>
+        <ul class="space-y-2 mb-6">
+          {locations.map(l => (
+            <li>
+              <a href={`/locations/${l.slug}/`} class="text-sm text-slate-400 hover:text-teal-300 transition-colors">
+                {l.name}, {l.state}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/locations/" class="text-sm text-teal-400 hover:text-teal-300 font-medium transition-colors">
+              All Locations →
+            </a>
+          </li>
+        </ul>
+
+        <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-3">Quick Links</h3>
+        <ul class="space-y-2">
+          <li><a href="/about/" class="text-sm text-slate-400 hover:text-teal-300 transition-colors">About Us</a></li>
+          <li><a href="/contact/" class="text-sm text-slate-400 hover:text-teal-300 transition-colors">Contact</a></li>
+          <li><a href="/request-appointment/" class="text-sm text-slate-400 hover:text-teal-300 transition-colors">Request Appointment</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs text-slate-500 text-center sm:text-left">
+        © {year} Dallas Pain Help. All rights reserved.
+      </p>
+      <p class="text-xs text-slate-500 text-center leading-relaxed max-w-xl">
+        <strong class="text-slate-400">Medical Disclaimer:</strong> This website is for informational purposes only
+        and does not constitute medical advice, diagnosis, or treatment. Always consult a qualified healthcare
+        provider with questions about a medical condition. In an emergency, call 911.
+      </p>
+    </div>
+  </div>
+</footer>

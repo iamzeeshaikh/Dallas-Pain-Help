@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CTASection from '../../components/CTASection.astro';
+import { locations } from '../../data/locations';
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Pain Management Service Areas in Dallas–Fort Worth',
+  description: 'Dallas Pain Help serves patients across 13 DFW communities including Dallas, Plano, Irving, Frisco, Arlington, Garland, McKinney, Richardson, and more.',
+  url: 'https://www.dallaspainhelp.com/locations/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: locations.map((l, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `Pain Management in ${l.name}, TX`,
+      url: `https://www.dallaspainhelp.com/locations/${l.slug}/`,
+    })),
+  },
+};
+---
+
+<BaseLayout
+  title="DFW Pain Management Locations | Dallas Pain Help"
+  description="Pain management serving Dallas, Plano, Irving, Frisco, Arlington, Garland, McKinney, Richardson, and all DFW communities. Same-day appointments available."
+  schema={collectionSchema}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'Service Areas' }]} />
+  </div>
+
+  <section class="py-14 bg-white border-b border-slate-100" aria-labelledby="loc-index-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <h1 id="loc-index-heading" class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-4">
+          Pain Management Across the DFW Metroplex
+        </h1>
+        <p class="text-xl text-slate-600 leading-relaxed">
+          Our Dallas pain management clinic serves patients throughout the Dallas–Fort Worth Metroplex.
+          Expert pain care is available close to wherever you live in North Texas.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white" aria-label="All service areas">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {locations.map(location => (
+          <a
+            href={`/locations/${location.slug}/`}
+            class="card p-6 flex flex-col gap-3 group"
+          >
+            <div class="flex items-center gap-3 mb-1">
+              <div
+                class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style="background:#e0f5f7"
+              >
+                <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold text-slate-900 group-hover:text-teal-700 transition-colors leading-tight">
+                  {location.name}, {location.state}
+                </h2>
+                <p class="text-xs text-slate-500">{location.county} · Pop. {location.population}</p>
+              </div>
+            </div>
+            <p class="text-sm text-slate-500 leading-relaxed">{location.intro.slice(0, 120)}…</p>
+            <div class="mt-auto flex flex-wrap gap-1.5">
+              {location.nearbyLandmarks.slice(0, 2).map(lm => (
+                <span class="text-xs bg-slate-50 text-slate-500 rounded-full px-2.5 py-1">{lm}</span>
+              ))}
+            </div>
+            <span class="text-sm text-teal-600 font-medium flex items-center gap-1">
+              Pain management in {location.name} →
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    heading="Pain Management Near You in the DFW Metroplex"
+    subheading="Wherever you are in North Texas, expert pain care is close. Same-day appointments available."
+    variant="teal"
+  />
+</BaseLayout>

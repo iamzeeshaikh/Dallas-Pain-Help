@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block thank-you and confirmation pages from indexing
+Disallow: /thank-you/
+
+Sitemap: https://www.dallaspainhelp.com/sitemap-index.xml

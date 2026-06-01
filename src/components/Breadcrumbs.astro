@@ -1,0 +1,54 @@
+---
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.dallaspainhelp.com/' },
+    ...crumbs.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 2,
+      name: c.label,
+      ...(c.href ? { item: `https://www.dallaspainhelp.com${c.href}` } : {}),
+    })),
+  ],
+};
+---
+
+<nav aria-label="Breadcrumb" class="py-3">
+  <ol class="flex items-center flex-wrap gap-1.5 text-sm text-slate-500" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item" class="hover:text-teal-700 transition-colors">
+        <span itemprop="name">Home</span>
+      </a>
+      <meta itemprop="position" content="1" />
+    </li>
+    {crumbs.map((crumb, i) => (
+      <>
+        <li aria-hidden="true" class="text-slate-300">›</li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          {crumb.href ? (
+            <a href={crumb.href} itemprop="item" class="hover:text-teal-700 transition-colors">
+              <span itemprop="name">{crumb.label}</span>
+            </a>
+          ) : (
+            <span itemprop="name" class="text-slate-700 font-medium" aria-current="page">{crumb.label}</span>
+          )}
+          <meta itemprop="position" content={String(i + 2)} />
+        </li>
+      </>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

@@ -1,0 +1,22 @@
+# Netlify headers — caching + security
+# See: https://docs.netlify.com/routing/headers/
+
+# Static assets — long-lived cache
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=2592000
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML pages — revalidate frequently
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  X-XSS-Protection: 1; mode=block
+  Cache-Control: public, max-age=0, must-revalidate

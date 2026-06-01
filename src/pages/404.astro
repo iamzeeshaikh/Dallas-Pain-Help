@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page Not Found | Dallas Pain Help"
+  description="The page you are looking for could not be found. Return to Dallas Pain Help's homepage."
+  noindex={true}
+>
+  <div class="min-h-[70vh] flex items-center justify-center py-20">
+    <div class="max-w-lg mx-auto px-4 text-center">
+      <div class="text-8xl font-bold mb-4" style="color:#e0f5f7">404</div>
+      <h1 class="text-3xl font-bold text-slate-900 mb-4">Page Not Found</h1>
+      <p class="text-lg text-slate-600 leading-relaxed mb-8">
+        Sorry, we couldn't find the page you're looking for.
+        Let's get you back on the path to pain relief.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="btn-primary">Go to Homepage</a>
+        <a href="/conditions/" class="btn-secondary">Browse Conditions</a>
+      </div>
+      <p class="text-sm text-slate-500 mt-8">
+        Need help? Call
+        <a href="tel:+12145550100" class="text-teal-700 font-semibold">(214) 555-0100</a>
+      </p>
+    </div>
+  </div>
+</BaseLayout>

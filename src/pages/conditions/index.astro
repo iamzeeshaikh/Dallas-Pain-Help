@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CTASection from '../../components/CTASection.astro';
+import { conditions } from '../../data/conditions';
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Pain Conditions Treated in Dallas, TX',
+  description: 'Complete list of pain conditions treated by Dallas Pain Help — back pain, sciatica, arthritis, neuropathy, fibromyalgia, and more.',
+  url: 'https://www.dallaspainhelp.com/conditions/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: conditions.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      url: `https://www.dallaspainhelp.com/conditions/${c.slug}/`,
+    })),
+  },
+};
+---
+
+<BaseLayout
+  title="Pain Conditions Treated in Dallas, TX | Dallas Pain Help"
+  description="Browse all pain conditions treated at our Dallas clinic — back pain, sciatica, arthritis, neuropathy, and more. Expert minimally invasive care. Call today."
+  schema={collectionSchema}
+>
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'Conditions Treated' }]} />
+  </div>
+
+  <!-- Hero -->
+  <section class="py-14 bg-white border-b border-slate-100" aria-labelledby="cond-index-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <h1 id="cond-index-heading" class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-4">
+          Pain Conditions We Treat in Dallas
+        </h1>
+        <p class="text-xl text-slate-600 leading-relaxed">
+          Our Dallas pain management team treats all types of chronic and acute pain conditions —
+          from common back pain and sciatica to complex neuropathy and fibromyalgia.
+          Every treatment plan is tailored to your specific diagnosis and goals.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conditions grid -->
+  <section class="py-16 bg-white" aria-label="All conditions">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {conditions.map(condition => (
+          <a
+            href={`/conditions/${condition.slug}/`}
+            class="card p-6 flex flex-col gap-3 group"
+          >
+            <div
+              class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style="background:#e0f5f7"
+            >
+              <svg class="w-5 h-5 text-teal-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+              </svg>
+            </div>
+            <h2 class="text-lg font-semibold text-slate-900 group-hover:text-teal-700 transition-colors leading-tight">
+              {condition.name}
+            </h2>
+            <p class="text-sm text-slate-500 leading-relaxed flex-1">
+              {condition.intro.slice(0, 120)}…
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-1">
+              {condition.symptoms.slice(0, 3).map(s => (
+                <span class="text-xs bg-teal-50 text-teal-700 rounded-full px-2.5 py-1">{s}</span>
+              ))}
+            </div>
+            <span class="text-sm text-teal-600 font-medium flex items-center gap-1 mt-1">
+              Learn about treatment
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    heading="Don't See Your Condition?"
+    subheading="Call us — our pain specialists treat a wide range of conditions beyond this list. Same-day appointments available."
+    variant="teal"
+  />
+</BaseLayout>

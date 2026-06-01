@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Appointment Requested | Dallas Pain Help"
+  description="Thank you for requesting an appointment with Dallas Pain Help. We'll confirm within 1 business hour."
+  noindex={true}
+>
+  <div class="min-h-[70vh] flex items-center justify-center py-20">
+    <div class="max-w-xl mx-auto px-4 text-center">
+      <div
+        class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+        style="background:linear-gradient(135deg,#0E5C63,#1A8A99)"
+      >
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+        Appointment Request Received!
+      </h1>
+      <p class="text-lg text-slate-600 leading-relaxed mb-8">
+        Thank you for reaching out to Dallas Pain Help. Our team will review your request
+        and confirm your appointment within <strong>1 business hour</strong> during clinic hours.
+      </p>
+
+      <div class="card p-6 text-left mb-8">
+        <h2 class="font-bold text-slate-900 mb-3">What Happens Next</h2>
+        <ol class="space-y-3">
+          {[
+            'A team member will call or email to confirm your appointment time.',
+            'You\'ll receive a reminder 24 hours before your visit.',
+            'Please bring your photo ID, insurance card, and any imaging reports.',
+            'Arrive 15 minutes early to complete new patient paperwork.',
+          ].map((step, i) => (
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+              <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white" style="background:#0E5C63">
+                {i + 1}
+              </span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <p class="text-sm text-slate-500 mb-6">
+        Need immediate assistance? Call us at
+        <a href="tel:+12145550100" class="text-teal-700 font-semibold hover:text-teal-800">(214) 555-0100</a>
+      </p>
+
+      <a href="/" class="btn-secondary">← Back to Homepage</a>
+    </div>
+  </div>
+</BaseLayout>

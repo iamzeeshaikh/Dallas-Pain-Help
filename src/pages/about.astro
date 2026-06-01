@@ -1,0 +1,206 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CTASection from '../components/CTASection.astro';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Dallas Pain Help',
+  url: 'https://www.dallaspainhelp.com/',
+  logo: 'https://www.dallaspainhelp.com/favicon.svg', // TODO: Replace with full-size PNG logo (400×400 min) before launch
+  telephone: '+12145550100', // TODO: Replace with real number
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '1234 Medical Drive, Suite 100',
+    addressLocality: 'Dallas',
+    addressRegion: 'TX',
+    postalCode: '75201',
+    addressCountry: 'US',
+  },
+  sameAs: [
+    // TODO: Add real social media profile URLs before launch
+    // 'https://www.facebook.com/dallaspainhelp',
+    // 'https://www.instagram.com/dallaspainhelp',
+  ],
+};
+---
+
+<BaseLayout
+  title="About Dallas Pain Help | Pain Specialists in Dallas, TX"
+  description="Meet Dallas Pain Help — board-certified pain specialists committed to minimally invasive care. Learn our approach and why DFW patients choose us."
+  schema={organizationSchema}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'About Us' }]} />
+  </div>
+
+  <!-- Hero -->
+  <section
+    class="py-16"
+    style="background:linear-gradient(135deg,#0a4a50,#0E5C63)"
+    aria-labelledby="about-heading"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+      <h1 id="about-heading" class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+        About Dallas Pain Help
+      </h1>
+      <p class="text-xl text-teal-100 leading-relaxed">
+        Board-certified pain management specialists dedicated to restoring quality of life
+        for patients across the Dallas–Fort Worth Metroplex.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid lg:grid-cols-3 gap-16">
+      <div class="lg:col-span-2 prose-medical">
+
+        <h2>Our Mission</h2>
+        <p>
+          At Dallas Pain Help, our mission is straightforward: accurately diagnose the source
+          of your pain and deliver the most targeted, least invasive treatment available to
+          restore your function and quality of life. Pain is not inevitable — and most chronic
+          pain conditions respond well to properly selected, expertly performed interventional
+          treatments.
+        </p>
+        <p>
+          We serve the entire Dallas–Fort Worth Metroplex, from Dallas proper to Frisco,
+          Richardson, Irving, Arlington, and beyond. Our clinic is committed to being
+          accessible, affordable, and clinically excellent for every patient who trusts
+          us with their care.
+        </p>
+
+        <!-- TODO: Replace this section with verified physician bios before launch.
+             Do NOT publish fabricated names, credentials, or photos. -->
+        <h2>Our Pain Management Physicians</h2>
+        <p>
+          Our clinic is led by fellowship-trained, board-certified pain management physicians
+          with subspecialty expertise in interventional pain procedures. Each physician completed
+          residency training followed by a dedicated fellowship in pain medicine — the advanced
+          training that distinguishes pain specialists from general practitioners.
+        </p>
+        <p>
+          Every procedure at our Dallas clinic is performed or supervised by a board-certified
+          physician using fluoroscopic (X-ray) or ultrasound image guidance. We do not delegate
+          injections to non-physician practitioners. You receive specialist-level care at every visit.
+        </p>
+
+        <!-- TODO: Add individual physician bios, photos, and verified credentials here before launch -->
+        <!-- Image placeholder for physician photo -->
+        <div
+          class="rounded-2xl flex flex-col items-center justify-center text-center p-10 my-8"
+          style="background:#f5f7f8; border: 1px dashed #90a4ae; min-height:200px"
+          role="img"
+          aria-label="Dallas Pain Help physicians — photo coming soon"
+        >
+          <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <p class="text-slate-400 text-sm font-medium">Physician team photo</p>
+          <p class="text-slate-300 text-xs mt-1">Coming soon — professionally photographed team photos</p>
+        </div>
+
+        <h2>Our Approach to Pain Management</h2>
+        <p>
+          We believe in a stepwise, evidence-based approach. We begin with the simplest, safest
+          interventions — education, <a href="/treatments/physical-therapy/">physical therapy</a>, and non-opioid
+          medications — and escalate to advanced procedures only when needed. The goal is always
+          the least invasive treatment that gives you the most durable relief.
+        </p>
+        <ul>
+          <li><strong>Accurate diagnosis first:</strong> We invest the time to identify the precise pain generator before recommending any treatment. A correct diagnosis drives everything else.</li>
+          <li><strong>Minimally invasive:</strong> We prefer procedures that require no incision, no general anesthesia, and allow same-day return to normal activity when possible.</li>
+          <li><strong>Reduce opioid reliance:</strong> We use multimodal pain management — injections, nerve blocks, neuromodulation, and rehabilitation — to minimize or eliminate the need for long-term opioid medications.</li>
+          <li><strong>Image-guided precision:</strong> All injections at our Dallas clinic use fluoroscopic (live X-ray) or ultrasound guidance. Guidance isn't optional for us — it's standard on every procedure.</li>
+          <li><strong>Coordinated, whole-patient care:</strong> We work closely with your primary care physician, orthopedic surgeon, neurologist, or rheumatologist. You receive integrated care, not an island of pain management disconnected from the rest of your health.</li>
+        </ul>
+
+        <h2>Conditions We Treat</h2>
+        <p>
+          Our physicians treat the full spectrum of chronic and acute pain — from common
+          <a href="/conditions/back-pain/">low back pain</a> and <a href="/conditions/sciatica/">sciatica</a> to complex
+          neuropathic pain and post-surgical pain syndromes. Whether your pain stems from a disc herniation,
+          spinal stenosis, arthritis, fibromyalgia, or an undiagnosed nerve injury, we have the tools
+          and expertise to identify the source and deliver targeted relief.
+        </p>
+
+        <h2>Our Dallas Clinic</h2>
+        <p>
+          <!-- TODO: Add real clinic address, parking details, and accessibility information before launch -->
+          Our clinic is designed around the patient experience. Procedure suites use fluoroscopic
+          imaging for precise, real-time guidance on every injection. Comfortable recovery areas,
+          efficient scheduling, and a bilingual staff — fluent in English and Spanish — mean
+          every patient feels cared for from arrival to discharge.
+        </p>
+
+        <h2>Serving the Entire DFW Metroplex</h2>
+        <p>
+          We serve patients from across the Dallas–Fort Worth area, including Plano, Irving,
+          Arlington, Frisco, Richardson, Garland, and all surrounding communities. If you live
+          or work anywhere in North Texas and are ready to address your pain, <a href="/request-appointment/">request an appointment</a> online
+          or call our office for same-day availability.
+        </p>
+
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6">
+        <!-- Certifications -->
+        <!-- TODO: Replace credential list with verified certifications + add board cert logos before launch -->
+        <div class="card p-6">
+          <h3 class="font-bold text-slate-900 mb-4">Credentials & Certifications</h3>
+          <ul class="space-y-2 text-sm text-slate-600">
+            {[
+              'Board Certified in Pain Medicine',
+              'Fellowship-trained in Interventional Pain',
+              'Texas Medical Board Licensed',
+              'ACGME-accredited fellowship training',
+            ].map(cred => (
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {cred}
+              </li>
+            ))}
+          </ul>
+          <p class="text-xs text-slate-400 mt-3">Verification and accreditation logos added before launch</p>
+        </div>
+
+        <!-- Insurance accepted -->
+        <!-- TODO: Verify insurance participation list before launch -->
+        <div class="card p-5">
+          <h3 class="font-bold text-slate-900 mb-3 text-sm">Insurance Accepted</h3>
+          <ul class="space-y-1.5 text-sm text-slate-600">
+            {['Blue Cross Blue Shield of Texas', 'UnitedHealthcare', 'Aetna', 'Cigna', 'Medicare', 'Medicaid', 'Most commercial plans'].map(ins => (
+              <li class="flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {ins}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#0E5C63,#1A8A99)" class="rounded-2xl p-5 text-white">
+          <h3 class="font-bold mb-2 text-sm">Schedule a Consultation</h3>
+          <p class="text-teal-100 text-xs leading-relaxed mb-4">
+            Meet our physicians and discuss your pain management options.
+            Same-day appointments are often available.
+          </p>
+          <a href="/request-appointment/" class="btn-primary w-full justify-center text-sm py-3">
+            Request Appointment
+          </a>
+          <a href="tel:+12145550100" class="btn-white mt-2 w-full justify-center text-sm py-3">
+            Call (214) 555-0100
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <CTASection heading="Ready to Meet Our Pain Specialists?" variant="teal" />
+</BaseLayout>
