@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# macOS AppleDouble files (exFAT drive)
+._*
+**/._*
+
+# source images (site uses public/images)
+Images dallas pain help/
