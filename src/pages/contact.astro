@@ -146,18 +146,16 @@ const localBusinessSchema = {
           </div>
         </div>
 
-        <!-- Map placeholder -->
-        <div
-          class="rounded-2xl flex flex-col items-center justify-center text-center p-12 mt-8"
-          style="background:#f5f7f8; border: 1px dashed #90a4ae; min-height:240px"
-          role="img"
-          aria-label="Map showing Dallas Pain Help clinic location"
-        >
-          <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-          </svg>
-          <p class="text-slate-400 text-sm font-medium">Interactive map placeholder</p>
-          <!-- TODO: Embed real clinic map here before launch -->
+        <!-- TODO: Update map query to the real clinic address before launch -->
+        <div class="rounded-2xl overflow-hidden mt-8">
+          <iframe
+            src="https://maps.google.com/maps?q=Dallas,+TX&z=11&output=embed"
+            title="Map showing Dallas Pain Help clinic location in Dallas, TX"
+            class="w-full border-0 block"
+            style="min-height:240px"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
         </div>
       </div>
 
