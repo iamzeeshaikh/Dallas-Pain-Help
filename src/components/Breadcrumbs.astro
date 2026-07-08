@@ -14,12 +14,12 @@ const schema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.dallaspainhelp.com/' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://dallaspainhelp.com/' },
     ...crumbs.map((c, i) => ({
       '@type': 'ListItem',
       position: i + 2,
       name: c.label,
-      ...(c.href ? { item: `https://www.dallaspainhelp.com${c.href}` } : {}),
+      ...(c.href ? { item: `https://dallaspainhelp.com${c.href}` } : {}),
     })),
   ],
 };

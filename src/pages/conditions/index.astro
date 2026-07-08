@@ -9,14 +9,14 @@ const collectionSchema = {
   '@type': 'CollectionPage',
   name: 'Pain Conditions Treated in Dallas, TX',
   description: 'Complete list of pain conditions treated by Dallas Pain Help — back pain, sciatica, arthritis, neuropathy, fibromyalgia, and more.',
-  url: 'https://www.dallaspainhelp.com/conditions/',
+  url: 'https://dallaspainhelp.com/conditions/',
   mainEntity: {
     '@type': 'ItemList',
     itemListElement: conditions.map((c, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       name: c.name,
-      url: `https://www.dallaspainhelp.com/conditions/${c.slug}/`,
+      url: `https://dallaspainhelp.com/conditions/${c.slug}/`,
     })),
   },
 };

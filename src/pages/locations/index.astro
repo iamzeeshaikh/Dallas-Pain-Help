@@ -9,14 +9,14 @@ const collectionSchema = {
   '@type': 'CollectionPage',
   name: 'Pain Management Service Areas in Dallas–Fort Worth',
   description: 'Dallas Pain Help serves patients across 13 DFW communities including Dallas, Plano, Irving, Frisco, Arlington, Garland, McKinney, Richardson, and more.',
-  url: 'https://www.dallaspainhelp.com/locations/',
+  url: 'https://dallaspainhelp.com/locations/',
   mainEntity: {
     '@type': 'ItemList',
     itemListElement: locations.map((l, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       name: `Pain Management in ${l.name}, TX`,
-      url: `https://www.dallaspainhelp.com/locations/${l.slug}/`,
+      url: `https://dallaspainhelp.com/locations/${l.slug}/`,
     })),
   },
 };

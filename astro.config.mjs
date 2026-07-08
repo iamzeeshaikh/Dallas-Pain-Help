@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://www.dallaspainhelp.com',
+  site: 'https://dallaspainhelp.com',
   trailingSlash: 'always',
   output: 'static',
   vite: {
