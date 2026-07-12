@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CTASection from '../../components/CTASection.astro';
+import { blogPosts } from '../../data/blog';
+
+const sortedPosts = [...blogPosts].sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Dallas Pain Help Blog',
+  description: 'Expert guides on pain management, non-surgical treatments, and living pain-free in Dallas, TX.',
+  url: 'https://dallaspainhelp.com/blog/',
+  blogPost: sortedPosts.map(p => ({
+    '@type': 'BlogPosting',
+    headline: p.title,
+    description: p.schemaDescription,
+    datePublished: p.date,
+    url: `https://dallaspainhelp.com/blog/${p.slug}/`,
+  })),
+};
+
+function dateLabel(d: string) {
+  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<BaseLayout
+  title="Pain Management Blog | Expert Guides for Dallas Patients | Dallas Pain Help"
+  description="Read expert guides on pain management, non-surgical back pain treatments, sciatica relief, and arthritis care from Dallas Pain Help. Practical advice for real relief."
+  schema={collectionSchema}
+>
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[{ label: 'Blog' }]} />
+  </div>
+
+  <!-- Hero -->
+  <section class="py-14 bg-white border-b border-slate-100" aria-labelledby="blog-index-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <h1 id="blog-index-heading" class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-4">
+          Pain Management Insights &amp; Guides
+        </h1>
+        <p class="text-xl text-slate-600 leading-relaxed">
+          Practical, doctor-informed guidance on treating chronic pain without surgery —
+          from understanding your options to knowing when it is time to see a specialist.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Posts grid -->
+  <section class="py-16 bg-white" aria-label="Blog posts">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {sortedPosts.map(post => (
+          <a href={`/blog/${post.slug}/`} class="card p-6 flex flex-col gap-3 group">
+            <div class="flex items-center gap-2 text-xs">
+              <span class="bg-teal-50 text-teal-700 rounded-full px-2.5 py-1 font-medium">{post.category}</span>
+              <span class="text-slate-400">{post.readTime}</span>
+            </div>
+            <h2 class="text-lg font-semibold text-slate-900 group-hover:text-teal-700 transition-colors leading-snug">
+              {post.title}
+            </h2>
+            <p class="text-sm text-slate-500 leading-relaxed flex-1">
+              {post.excerpt}
+            </p>
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-xs text-slate-400">{dateLabel(post.date)}</span>
+              <span class="text-sm text-teal-600 font-medium flex items-center gap-1">
+                Read more
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection heading="Have Questions About Your Pain?" />
+</BaseLayout>

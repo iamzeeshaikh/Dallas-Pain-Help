@@ -1,0 +1,247 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AppointmentForm from '../../components/AppointmentForm.astro';
+import CTASection from '../../components/CTASection.astro';
+import { blogPosts } from '../../data/blog';
+import { conditions } from '../../data/conditions';
+import { treatments } from '../../data/treatments';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return blogPosts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+};
+
+const { post } = Astro.props;
+
+const relatedConditionData = conditions.filter(c => post.relatedConditions.includes(c.slug));
+const relatedTreatmentData = treatments.filter(t => post.relatedTreatments.includes(t.slug));
+const morePosts = blogPosts.filter(p => p.slug !== post.slug).slice(0, 2);
+
+const url = `https://dallaspainhelp.com/blog/${post.slug}/`;
+const dateLabel = new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.schemaDescription,
+  author: { '@type': 'Organization', name: 'Dallas Pain Help' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Dallas Pain Help',
+    logo: { '@type': 'ImageObject', url: 'https://dallaspainhelp.com/favicon-96.png' },
+  },
+  datePublished: post.date,
+  dateModified: post.date,
+  mainEntityOfPage: url,
+  url,
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: post.faq.map(f => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+function renderBody(text: string): string {
+  const applyInline = (s: string) =>
+    s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  return text
+    .split('\n\n')
+    .map(para => {
+      const trimmed = para.trim();
+      if (trimmed.startsWith('<')) return trimmed;
+      if (trimmed.startsWith('## ')) return `<h2>${trimmed.slice(3)}</h2>`;
+      if (/^\*\*[^*\n]+\*\*$/.test(trimmed)) return `<h3>${trimmed.slice(2, -2)}</h3>`;
+      if (/^\d+\.\s/.test(trimmed)) {
+        const items = trimmed.split('\n').filter(l => /^\d+\.\s/.test(l.trim()))
+          .map(l => `<li>${applyInline(l.replace(/^\d+\.\s/, ''))}</li>`).join('');
+        return `<ol>${items}</ol>`;
+      }
+      if (trimmed.startsWith('- ')) {
+        const items = trimmed.split('\n').filter(l => l.trim().startsWith('- '))
+          .map(l => `<li>${applyInline(l.trim().slice(2))}</li>`).join('');
+        return `<ul>${items}</ul>`;
+      }
+      return `<p>${applyInline(para)}</p>`;
+    })
+    .join('');
+}
+---
+
+<BaseLayout
+  title={post.metaTitle}
+  description={post.metaDescription}
+  canonical={url}
+  schema={[articleSchema, faqSchema]}
+>
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Breadcrumbs crumbs={[
+      { label: 'Blog', href: '/blog/' },
+      { label: post.title },
+    ]} />
+  </div>
+
+  <!-- Hero -->
+  <section
+    class="py-14 md:py-18"
+    style="background:linear-gradient(135deg,#0a4a50,#0E5C63,#147078)"
+    aria-labelledby="post-heading"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-block text-sm font-medium text-teal-200 mb-3">{post.category} · {dateLabel} · {post.readTime}</span>
+        <h1 id="post-heading" class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+          {post.heroHeading}
+        </h1>
+        <p class="text-xl text-teal-100 leading-relaxed">{post.heroSubheading}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid lg:grid-cols-3 gap-12">
+
+      <!-- Article body -->
+      <article class="lg:col-span-2">
+        <!-- Intro -->
+        <div class="text-xl text-slate-700 leading-relaxed mb-8 pb-8 border-b border-slate-100 font-light">
+          {post.intro}
+        </div>
+
+        <!-- Body content -->
+        <div class="prose-medical" set:html={renderBody(post.body)} />
+
+        <!-- Related Treatments -->
+        {relatedTreatmentData.length > 0 && (
+          <section aria-labelledby="rel-treatments-heading" class="mt-12">
+            <h2 id="rel-treatments-heading" class="text-2xl font-bold text-slate-900 mb-5">
+              Related Treatments in Dallas
+            </h2>
+            <div class="grid sm:grid-cols-2 gap-4">
+              {relatedTreatmentData.map(t => (
+                <a href={`/treatments/${t.slug}/`} class="card p-5 flex items-start gap-3 group">
+                  <div
+                    class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                    style="background:linear-gradient(135deg,#0E5C63,#1A8A99)"
+                  >
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-slate-900 group-hover:text-teal-700 transition-colors text-sm">{t.name}</h3>
+                    <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">{t.intro.slice(0, 80)}…</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <!-- FAQ -->
+        <section aria-labelledby="faq-heading" class="mt-12">
+          <h2 id="faq-heading" class="text-2xl font-bold text-slate-900 mb-5">
+            Frequently Asked Questions
+          </h2>
+          <div class="space-y-3">
+            {post.faq.map((item, i) => (
+              <details class="card group" id={`faq-post-${i}`}>
+                <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer list-none font-semibold text-slate-800 hover:text-teal-700 transition-colors select-none">
+                  {item.question}
+                  <svg class="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </summary>
+                <div class="px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                  {item.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- More from the blog -->
+        {morePosts.length > 0 && (
+          <section aria-labelledby="more-posts-heading" class="mt-12">
+            <h2 id="more-posts-heading" class="text-2xl font-bold text-slate-900 mb-5">Keep Reading</h2>
+            <div class="grid sm:grid-cols-2 gap-4">
+              {morePosts.map(p => (
+                <a href={`/blog/${p.slug}/`} class="card p-5 group">
+                  <span class="text-xs font-semibold text-teal-600 uppercase tracking-wide">{p.category}</span>
+                  <h3 class="font-semibold text-slate-900 group-hover:text-teal-700 transition-colors mt-1 leading-snug">{p.title}</h3>
+                  <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">{p.excerpt.slice(0, 100)}…</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6">
+        <!-- Quick appointment form -->
+        <div class="card p-6 sticky top-24">
+          <AppointmentForm
+            heading="Request Appointment"
+            subheading="Same-day availability. Confirm within 1 hour."
+            compact={true}
+          />
+        </div>
+
+        <!-- Related conditions -->
+        {relatedConditionData.length > 0 && (
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-900 mb-3 text-sm">Related Conditions</h3>
+            <ul class="space-y-2">
+              {relatedConditionData.map(c => (
+                <li>
+                  <a href={`/conditions/${c.slug}/`} class="flex items-center gap-2 text-sm text-slate-600 hover:text-teal-700 transition-colors">
+                    <svg class="w-3.5 h-3.5 text-teal-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M9 5l7 7-7 7" clip-rule="evenodd"/>
+                    </svg>
+                    {c.name}
+                  </a>
+                </li>
+              ))}
+              <li class="pt-1">
+                <a href="/conditions/" class="text-xs text-teal-600 hover:text-teal-700 font-medium">View all conditions →</a>
+              </li>
+            </ul>
+          </div>
+        )}
+
+        <!-- Trust block -->
+        <div style="background:linear-gradient(135deg,#0E5C63,#1A8A99)" class="rounded-2xl p-5 text-white">
+          <h3 class="font-bold mb-3 text-sm">Why Choose Dallas Pain Help?</h3>
+          <ul class="space-y-2.5">
+            {['Board-certified pain specialists', 'Same-day appointments available', 'Most insurance accepted', 'Minimally invasive approach', 'Bilingual care (EN/ES)'].map(item => (
+              <li class="flex items-center gap-2 text-sm text-teal-100">
+                <svg class="w-4 h-4 text-coral-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a href="tel:+12145550100" class="btn-white mt-4 w-full justify-center text-sm py-3">
+            Call (214) 555-0100
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <CTASection heading="Ready to Talk to a Dallas Pain Specialist?" />
+</BaseLayout>
